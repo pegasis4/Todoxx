@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const TodoList = ({ title, todos, moveToOngoing, moveToCompleted}) => {
+const TodoList = ({ title, todos, moveToOngoing, moveToCompleted }) => {
   const [todoss, setTodos] = useState(todos);
 
   useEffect(() => {
@@ -11,12 +11,12 @@ const TodoList = ({ title, todos, moveToOngoing, moveToCompleted}) => {
     const newTodos = todoss.filter((todo) => todo.id !== id);
     setTodos(newTodos);
   };
+
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     return formattedDate;
   };
-
 
   return (
     <div className="todo-list">
@@ -26,8 +26,8 @@ const TodoList = ({ title, todos, moveToOngoing, moveToCompleted}) => {
       ) : (
         todoss.map((todo) => (
           <div key={todo.id} className="todo-item">
-            <span>{todo.text }</span>
-            <span>{formatDate(todo.id)}</span>
+            <span>{todo.text}</span>
+            {todo.status === 'completed' && <span>{formatDate(todo.id)}</span>}
             <div className="button-group">
               {moveToOngoing && (
                 <button onClick={() => moveToOngoing(todo.id)} className="btn ongoing-btn">Ongoing</button>

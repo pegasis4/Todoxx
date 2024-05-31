@@ -31,7 +31,7 @@ const App = () => {
       <TodoInput addTodo={addTodo} />
       <div className="container">
         <TodoList title="Todo" todos={todos} moveToOngoing={moveToOngoing} moveToCompleted={moveToCompleted} />
-        <TodoList title="Ongoing" todos={ongoingTodos} moveToCompleted={moveToCompleted} />
+        <TodoList title="Ongoing" todos={ongoingTodos}/>
         <TodoList title="Completed" todos={completedTodos}/>
       </div>
     </div>
