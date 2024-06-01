@@ -1,41 +1,35 @@
 import React, { useState, useEffect } from 'react';
 
-const TodoList = ({ title, todos, moveToOngoing, moveToCompleted }) => {
-  const [todoss, setTodos] = useState(todos);
+const TodoList = ({ title, todos, moveToOngoing, moveToCompleted, deleteTodo }) => {
+  const [localTodos, setLocalTodos] = useState(todos);
 
   useEffect(() => {
-    setTodos(todos);
+    setLocalTodos(todos);
   }, [todos]);
-
-  const del = (id) => {
-    const newTodos = todoss.filter((todo) => todo.id !== id);
-    setTodos(newTodos);
-  };
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
-    const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-    return formattedDate;
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   };
 
   return (
     <div className="todo-list">
       <h2>{title}</h2>
-      {todoss.length === 0 ? (
+      {localTodos.length === 0 ? (
         <p className="no-todos">No todos</p>
       ) : (
-        todoss.map((todo) => (
+        localTodos.map((todo) => (
           <div key={todo.id} className="todo-item">
             <span>{todo.text}</span>
             {todo.status === 'completed' && <span>{formatDate(todo.id)}</span>}
             <div className="button-group">
-              {moveToOngoing && (
+              {moveToOngoing && todo.status === 'todo' && (
                 <button onClick={() => moveToOngoing(todo.id)} className="btn ongoing-btn">Ongoing</button>
               )}
-              {moveToCompleted && (
+              {moveToCompleted && todo.status === 'ongoing' && (
                 <button onClick={() => moveToCompleted(todo.id)} className="btn completed-btn">Completed</button>
               )}
-              <button onClick={() => del(todo.id)} className="btn delete-btn">Delete</button>
+              <button onClick={() => deleteTodo(todo.id, todo.status)} className="btn delete-btn">Delete</button>
             </div>
           </div>
         ))

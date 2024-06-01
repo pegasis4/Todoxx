@@ -15,14 +15,28 @@ const App = () => {
 
   const moveToOngoing = (id) => {
     const todo = todos.find((todo) => todo.id === id);
-    setOngoingTodos([...ongoingTodos, { ...todo, status: 'ongoing' }]);
-    setTodos(todos.filter((todo) => todo.id !== id));
+    if (todo) {
+      setOngoingTodos([...ongoingTodos, { ...todo, status: 'ongoing' }]);
+      setTodos(todos.filter((todo) => todo.id !== id));
+    }
   };
 
   const moveToCompleted = (id) => {
-    const todo = todos.find((todo) => todo.id === id);
-    setCompletedTodos([...completedTodos, { ...todo, status: 'completed' }]);
-    setTodos(todos.filter((todo) => todo.id !== id));
+    const todo = ongoingTodos.find((todo) => todo.id === id);
+    if (todo) {
+      setCompletedTodos([...completedTodos, { ...todo, status: 'completed' }]);
+      setOngoingTodos(ongoingTodos.filter((todo) => todo.id !== id));
+    }
+  };
+
+  const deleteTodo = (id, status) => {
+    if (status === 'todo') {
+      setTodos(todos.filter((todo) => todo.id !== id));
+    } else if (status === 'ongoing') {
+      setOngoingTodos(ongoingTodos.filter((todo) => todo.id !== id));
+    } else if (status === 'completed') {
+      setCompletedTodos(completedTodos.filter((todo) => todo.id !== id));
+    }
   };
 
   return (
@@ -30,9 +44,9 @@ const App = () => {
       <h1>Todo App</h1>
       <TodoInput addTodo={addTodo} />
       <div className="container">
-        <TodoList title="Todo" todos={todos} moveToOngoing={moveToOngoing} moveToCompleted={moveToCompleted} />
-        <TodoList title="Ongoing" todos={ongoingTodos}/>
-        <TodoList title="Completed" todos={completedTodos}/>
+        <TodoList title="Todo" todos={todos} moveToOngoing={moveToOngoing} deleteTodo={deleteTodo} />
+        <TodoList title="Ongoing" todos={ongoingTodos} moveToCompleted={moveToCompleted} deleteTodo={deleteTodo} />
+        <TodoList title="Completed" todos={completedTodos} deleteTodo={deleteTodo} />
       </div>
     </div>
   );
