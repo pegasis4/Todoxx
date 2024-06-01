@@ -6,7 +6,7 @@ const TodoList = ({ title, todos, moveToOngoing, moveToCompleted, deleteTodo }) 
   useEffect(() => {
     setLocalTodos(todos);
   }, [todos]);
-
+  
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;

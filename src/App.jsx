@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoInput from './TodoInput';
 import TodoList from './TodoList';
 import './App.css';
@@ -8,34 +8,63 @@ const App = () => {
   const [ongoingTodos, setOngoingTodos] = useState([]);
   const [completedTodos, setCompletedTodos] = useState([]);
 
+  useEffect(() => {
+    const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
+    const savedOngoingTodos = JSON.parse(localStorage.getItem('ongoingTodos')) || [];
+    const savedCompletedTodos = JSON.parse(localStorage.getItem('completedTodos')) || [];
+    setTodos(savedTodos);
+    setOngoingTodos(savedOngoingTodos);
+    setCompletedTodos(savedCompletedTodos);
+  }, []);
+
+  const saveToLocalStorage = (todos, ongoingTodos, completedTodos) => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+    localStorage.setItem('ongoingTodos', JSON.stringify(ongoingTodos));
+    localStorage.setItem('completedTodos', JSON.stringify(completedTodos));
+  };
+
   const addTodo = (text) => {
     const newTodo = { id: Date.now(), text, status: 'todo' };
-    setTodos([...todos, newTodo]);
+    const newTodos = [...todos, newTodo];
+    setTodos(newTodos);
+    saveToLocalStorage(newTodos, ongoingTodos, completedTodos);
   };
 
   const moveToOngoing = (id) => {
     const todo = todos.find((todo) => todo.id === id);
     if (todo) {
-      setOngoingTodos([...ongoingTodos, { ...todo, status: 'ongoing' }]);
-      setTodos(todos.filter((todo) => todo.id !== id));
+      const newOngoingTodos = [...ongoingTodos, { ...todo, status: 'ongoing' }];
+      const newTodos = todos.filter((todo) => todo.id !== id);
+      setOngoingTodos(newOngoingTodos);
+      setTodos(newTodos);
+      saveToLocalStorage(newTodos, newOngoingTodos, completedTodos);
     }
   };
 
   const moveToCompleted = (id) => {
     const todo = ongoingTodos.find((todo) => todo.id === id);
     if (todo) {
-      setCompletedTodos([...completedTodos, { ...todo, status: 'completed' }]);
-      setOngoingTodos(ongoingTodos.filter((todo) => todo.id !== id));
+      const newCompletedTodos = [...completedTodos, { ...todo, status: 'completed' }];
+      const newOngoingTodos = ongoingTodos.filter((todo) => todo.id !== id);
+      setCompletedTodos(newCompletedTodos);
+      setOngoingTodos(newOngoingTodos);
+      saveToLocalStorage(todos, newOngoingTodos, newCompletedTodos);
     }
   };
 
   const deleteTodo = (id, status) => {
     if (status === 'todo') {
-      setTodos(todos.filter((todo) => todo.id !== id));
+      const newTodos = todos.filter((todo) => todo.id !== id);
+      setTodos(newTodos);
+      saveToLocalStorage(newTodos, ongoingTodos, completedTodos);
     } else if (status === 'ongoing') {
-      setOngoingTodos(ongoingTodos.filter((todo) => todo.id !== id));
+      const newOngoingTodos = ongoingTodos.filter((todo) => todo.id !== id);
+      setOngoingTodos(newOngoingTodos);
+      saveToLocalStorage(todos, newOngoingTodos, completedTodos);
     } else if (status === 'completed') {
-      setCompletedTodos(completedTodos.filter((todo) => todo.id !== id));
+      const newCompletedTodos = completedTodos.filter((todo) => todo.id !== id);
+      setCompletedTodos(newCompletedTodos);
+      saveToLocalStorage(todos, ongoingTodos, newCompletedTodos);
     }
   };
 
